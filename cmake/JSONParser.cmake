@@ -22,7 +22,7 @@
 
 # URL source: https://github.com/sbellus/json-cmake
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0054)
     # http://www.cmake.org/cmake/help/v3.1/policy/CMP0054.html
@@ -174,7 +174,7 @@ macro(_sbeParseNameValue prefix)
                 string(SUBSTRING "${json_string}" ${json_index} 1 json_char)
             endif()
 
-            set(json_name "${json_name}${json_char}")
+            string(APPEND json_name "${json_char}")
         endif()
 
         # check if name starts
@@ -212,6 +212,17 @@ macro(_sbeParseValue prefix)
     set(json_inValue no)
 
     while(${json_index} LESS ${json_jsonLen})
+        # fast path for copying strings
+        if (json_inValue)
+            # attempt to gobble up to 128 bytes of string
+            string(SUBSTRING "${json_string}" ${json_index} 128 try_gobble)
+            # consume a piece of string we can just straight copy before encountering \ or "
+            string(REGEX MATCH "^[^\"\\\\]+" simple_copy "${try_gobble}")
+            string(CONCAT json_value "${json_value}" "${simple_copy}")
+            string(LENGTH "${simple_copy}" copy_length)
+            math(EXPR json_index "${json_index} + ${copy_length}")
+        endif()
+
         string(SUBSTRING "${json_string}" ${json_index} 1 json_char)
 
         # check if json_value ends, it is ended by "
