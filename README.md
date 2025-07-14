@@ -62,6 +62,16 @@ cmake --build . --config release --target synccrsdb
 
 ## Build
 
+### docker
+
+```bash
+docker build -t nextgisqgis-dev .
+# 这会自动拉取 Ubuntu 20.04 基础镜像，安装项目所有依赖，并自动编译、安装 nextgisqgis 到容器内 /root/ngqgis/build/install 目录。
+docker run -it --rm nextgisqgis-dev /bin/bash
+# 进入了一个包含所有依赖和已编译项目的 Linux 环境，可以进一步开发、调试。
+```
+
+
 ### Mac OS X
 
 ```bash

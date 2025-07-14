@@ -50,21 +50,24 @@ RUN apt-get update -y && \
     qtbase5-private-dev \
     qttools5-dev-tools \
     qttools5-dev \
-    qtdeclarative5-dev \    
+    qtdeclarative5-dev \  
+    libqt5multimedia5 \
+    libqt5multimedia5-plugins \
+    libqt5multimediawidgets5 \
     python3-dev
 
 COPY . /root/ngqgis/
 
 WORKDIR /root/ngqgis/build
-
+RUN rm -rf *
 RUN cmake .. \
-        -DCMAKE_INSTALL_PREFIX=install \
-        -DSKIP_DEFAULTS=ON \
-        -DBUILD_SHARED_LIBS=ON \
-        -DPACKAGE_VENDOR=NextGIS \
-        -DBUILD_TESTING=OFF \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DWITH_BINDINGS=OFF -DWITH_OAUTH2_PLUGIN=OFF -DWITH_3D=OFF -DWITH_QGIS_PROCESS=OFF \
+    -DCMAKE_INSTALL_PREFIX=install \
+    -DSKIP_DEFAULTS=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    -DPACKAGE_VENDOR=NextGIS \
+    -DBUILD_TESTING=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_BINDINGS=OFF -DWITH_OAUTH2_PLUGIN=OFF -DWITH_3D=OFF -DWITH_QGIS_PROCESS=OFF \
     && cmake --build . \
         --target install \
         --config Release -- -j8
